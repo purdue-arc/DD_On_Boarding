@@ -1,12 +1,12 @@
 # Tutorial Module
 
-The goal is of this tutorial is to give new members fundamental understanding of software and frameworks that we use to operate the rover.
+The goal is of this tutorial is to give new members fundamental understanding of software and frameworks that we use to operate the drone.
 By the end of this tutorial, you should understand following topics
 
 - Basic Git workflow
 - Why and how to use Robot Operating System (ROS)
 - How to communicate between multiple machines
-- Create and control a rover in Gazebo (simulator)
+- Create and control a robot in Gazebo (simulator)
 
 Please note that this tutorial only touches the surface of software development world.
 It is highly recommend to reading more documents or tutorials and keep practicing.
@@ -69,13 +69,15 @@ Since ROS can requires Ubuntu, if your machine is not running Ubuntu, you will h
 
 Note. Any distro in Ubuntu family will work, such as, Kubuntu, Lubuntu, Linux Mint, POP! OS.
 
-Note2. ROS has 3 tiers of target OS, you can check [here](https://www.ros.org/reps/rep-2000.html#humble-hawksbill-may-2022-may-2027). It is possible that you can use ROS directly without Ubuntu.
+Note 2. ROS has 3 tiers of target OS, you can check [here](https://www.ros.org/reps/rep-2000.html#humble-hawksbill-may-2022-may-2027). It is possible that you can use ROS directly without Ubuntu.
 
 | Platform | VM                                         | WSL | Docker |
 | -------- | ------------------------------------------ | --- | ------ |
 | Windows  | [Link](#virtual-box-for-windows-and-linux) |     |
 | MacOS    | [link](https://mac.getutm.app/)            | NA  |
 | Linux    | [Link](#virtual-box-for-windows-and-linux) | NA  |
+
+Note 3. For MacOS users: For this onboarding project we will be using UTM; however, for almost all work on the project you all will have to use the teams server through the Proxmox service. The reason for this is for the simulator we currently use is gazebo classic 11, but there is an bug in that it does not work on apple silicon(arm64) with a Ubuntu 22.04 VM. The new version of gazebo that we will switch to, gazebo fortress, does not have this bug, but we have not been able to switch over yet, as there are many complications with switching to the new gazebo with PX4. Thus, for now we are sticking with using proxmox with the new gazebo. However, since UTM will be eventually what we can use, it is useful to learn how to configure it.
 
 <!-- ### Option Comparison -->
 
@@ -110,7 +112,22 @@ Note2. ROS has 3 tiers of target OS, you can check [here](https://www.ros.org/re
    If you forget the password, there is no way to recover it.
    You will need this password to install software packages later.
 
-### ROS Installation Guide
+### UTM(For MacOS Users)
+
+1. Click the download button on the homepage of the UTM website
+2. Drag the UTM application to the apps folder using the downloader installer
+3. Open the UTM application and click "Browse UTM Gallery"
+4. Click on the Ubuntu 22.04 image
+5. Click the "Open in UTM button"
+6. Wait for the download to finish and then click the play button to start the VM
+
+Note 1: This download will take multiple hours. DO NOT CLOSE UTM WHILE IT IS DOWNLOADING. It will stop the download and you will have to restart it.
+
+Note 2: Even though on the download it says Ubuntu 20.04, it is in fact downloading a Ubuntu 22.04 virtual machine.
+
+Note 3: Once the download finishes both the username and password will be "ubuntu".
+
+### ROS Installation Guide 
 
 1. Follow this [tutorial](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html) to install ROS.
 
@@ -178,7 +195,7 @@ In the "Source Control" tab, you will find all Git commands.
 every time before making any commits, make sure that you are working in the correct branch.
 By default, you will be in the main (or master) branch.
 This branch is protected.
-You cannot make any chances to on this branch directly.
+You cannot make any changes to this branch directly.
 You will need to create another branches then submitting a pull request after you finish the task.
 
 Making commit is a two-steps process.
@@ -228,11 +245,11 @@ Feel free to name your workspace folder whatever you would like, but make sure t
 
 The simplest form of communication between nodes is a publisher and subscriber setup.
 One node will write a message to a specific topic (basically just a named place where the value will exist) and another node repeatedly checks that topic to see if anything has been sent.
-This kind of system is very useful for much of what we need for the rover.
+This kind of system is very useful for much of what we need for the drone.
 For example, one node can constantly publish the state of a joystick and another node can read this in and convert it to motor outputs.
 
 Please go through the [talker and listener tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html) provided in the ROS 2 documentation.
-This tutorial is very thorough and we strongly recommend that you do the entire process and read it carefully, particularly the section describing how the talker and listener code actually works, as this will be critical to understanding rover communication.
+This tutorial is very thorough and we strongly recommend that you do the entire process and read it carefully, particularly the section describing how the talker and listener code actually works, as this will be critical to understanding drone communication.
 
 ## Communicating Across Machines
 
@@ -251,13 +268,15 @@ Once you have done this and are connected to the same network as the subscriber 
 
 ## Gazebo
 
+Note: Since Gazebo classic is reaching End of Life in January 2025, it makes more sense to learn about the new gazebo, which is now just called gazebo. Thus, the rest of this tutorial we will be using gazebo fortress.
+
 Gazebo is a robot simulator software.
 Gazebo can run as a standalone software in all OS, but in our case, we want to run Gazebo along with ROS.
 Therefore, we can test our ROS code.
 To install Gazebo, run the following command
 
 ```bash
- sudo apt install ros-humble-ros-gz
+ sudo apt install ros-humble-ros-gazebo
 ```
 
 This command will install Gazebo Fortress as it is the recommended version to work with ROS Humble.
@@ -279,11 +298,11 @@ Then follow the first two tutorials ([Building your own robot](https://gazebosim
 ### Connect with Gazebo and ROS
 
 During above Gazebo tutorial, you created a keyboard interface by Gazebo.
-It should work fine, but we won't use Gazebo with the real rover.
-So, the code that send command (the Twist message) should be created and sent in from the ROS working space.
+It should work fine, but we won't use Gazebo with the real drone.
+So, the code that sends command (the Twist message) should be created and sent in from the ROS working space.
 Recall from [Writing Publisher and Subscriber Nodes](#writing-publisher-and-subscriber-nodes) section, you already wrote a publisher that send simple texts.
-Next step, you will create another publisher that read keyboard input then send the Twist message to control the rover in Gazebo.
-Keep in mind that even you make a right publisher that send the Twist message on `cmd_vel` topic, Gazebo robot won't react.
+Next step, you will create another publisher that read keyboard input then send the Twist message to control the drone in Gazexo.
+Keep in mind that even you make a right publisher that send the Twist message on `cmd_vel` topic, the Gazebo robot won't react.
 This is because, by default, ROS and Gazebo world are not connected.
 To connect these two worlds, follow this [tutorial](https://gazebosim.org/docs/fortress/ros2_integration/)
 
