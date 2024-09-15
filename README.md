@@ -276,7 +276,7 @@ Therefore, we can test our ROS code.
 To install Gazebo, run the following command
 
 ```bash
- sudo apt install ros-humble-ros-gazebo
+ sudo apt install ros-humble-ros-gz
 ```
 
 This command will install Gazebo Fortress as it is the recommended version to work with ROS Humble.
